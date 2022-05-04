@@ -1,0 +1,80 @@
+# a megfigyelt �rt�kek megad�sa f�ggv�ny param�terbe a megfelel� helyre
+
+khi_negyzet<- function(Oszlop1_1,Oszlop1_2,Oszlop2_1,Oszlop2_2,SzignifikanciaSzint)
+
+# itt vizsg�lom, hogy a szignifikancia szintnek 1 vagy ann�l kisebbnek kell lennie. 
+#(pl: 95% os szint eset�n ez 0.95-�t jelent, �gy kell megadni az utols� param�tert, ha nagyobb mint 1 kil�p a f�ggv�ny)
+
+{
+if(SzignifikanciaSzint >= 1)
+{
+return("A szignifikancia szintnek 1 vagy ann�l kisebbnek kell lennie megad�skor!");
+}
+
+# itt �sszegzem a sorok �s oszlopok elemeit
+
+sor1_osszeg <- Oszlop1_1+Oszlop2_1;
+sor2_osszeg <- Oszlop1_2+Oszlop2_2;
+oszlop1_osszeg <- Oszlop1_1+Oszlop1_2;
+oszlop2_osszeg <- Oszlop2_1+Oszlop2_2;
+
+# majd �sszeadom ezeket az elemeket
+
+total <- sor1_osszeg + sor2_osszeg;
+
+# a v�rt (excpected) gyakoris�g sz�mol�sa k�plet szerint
+
+V�rhat�1 <- (sor1_osszeg * oszlop1_osszeg) / total;
+V�rhat�2 <- (sor1_osszeg * oszlop2_osszeg) / total;
+V�rhat�3 <- (sor2_osszeg * oszlop1_osszeg) / total;
+V�rhat�4 <- (sor2_osszeg * oszlop2_osszeg) / total;
+
+# kombin�lt el�fordul�si gyakoris�gok sz�m�t�sa
+
+khi_1 <- ((Oszlop1_1 - V�rhat�1)^2) / V�rhat�1;
+khi_2 <- ((Oszlop2_1 - V�rhat�2)^2) / V�rhat�2;
+khi_3 <- ((Oszlop1_2 - V�rhat�3)^2) / V�rhat�3;
+khi_4 <- ((Oszlop2_2 - V�rhat�4)^2) / V�rhat�4;
+
+# a kapott el�fordul�si gyakoris�gok �sszegz�s�vel kapjuk meg a khi n�gyzetet
+
+khi_negyzet <- khi_1 + khi_2 + khi_3 + khi_4;
+
+# szabads�gi fok sz�m�t�sa. K�plet szerint (sor-1)*(oszlop-1)
+# jelenleg ez 1, mivel 2x2-es a t�bl�nk
+
+szFok <- 1;
+
+# hat�r�rt�k sz�m�t�sa a kisz�molt khi_negyzettel �s a szabads�gi fokkal
+
+p_value <- pchisq(khi_negyzet,szFok,lower.tail=FALSE);
+
+# ha a kisz�molt p �rt�k kisebb mint a haszn�lt szignifikancia szint,
+# akkor a null hipot�zist elutas�tjuk.
+
+if(p_value < SzignifikanciaSzint)
+{
+result <- "A Null hipot�zist elutas�tjuk!.";
+
+}else {
+result <- "Elfogadjuk a Null hipot�zist.";
+
+}
+
+# list�ba szedtem az eredm�nyeket, hogy jobban �sszehasonl�that� legyen a be�p�tett f�ggv�ny eredm�nyeivel
+ 
+result_list <- list("X-squared" = khi_negyzet, "df" = szFok, "p_value" = p_value,"result" = result);
+
+return(result_list);
+
+}
+# saj�t f�ggv�ny
+# Null hipot�zis: dolgoz�k neme �s beoszt�sa egym�st�l f�ggetlenek.
+# Alternat�v hipot�zis: dolgoz�k neme �s besozt�sa egym�st�l nem f�ggetlenek.
+khi_negyzet(25,52,157,321,0.95)
+
+# be�p�tett f�ggv�ny --------------------------------------------------
+# egy m�trixot kell megadni a f�ggv�nynek, jelene esetben 2x2-eset. 
+
+datatable <- matrix(c(25,52,157,321),nrow=2,ncol=2)
+chisq.test(datatable,correct=FALSE)
