@@ -1,0 +1,69 @@
+X <- c(17,13,12,15,16,14,16,16,18,19)
+meanX <- mean(X)
+Y <- c(94,73,59,80,93,85,66,79,77,91)
+meanY <- mean(Y)
+x_meanX = 0
+for(i in 1:length(X)){
+  x_meanX[i] = X[i]-meanX
+}
+y_meanY = 0
+for(i in 1:length(Y)){
+  y_meanY[i] = Y[i]-meanY
+}
+multi1 = 0
+
+for(i in 1:length(X)){
+  multi1[i] = x_meanX[i] * y_meanY[i]
+  
+}
+sum_mutli1 = sum(multi1)
+
+x_meanX_2 =0
+for(i in 1:length(X)){
+  x_meanX_2[i] = x_meanX[i]^2
+}
+sum_x_meanX_2 = sum(x_meanX_2)
+
+y_meanY_2 =0
+for(i in 1:length(Y)){
+  y_meanY_2[i] = y_meanY[i]^2
+}
+
+sum_y_meanY_2 = sum(y_meanY_2)
+
+r = sum_mutli1 / (sqrt(sum_x_meanX_2*sum_y_meanY_2))
+
+
+Sy = sqrt((sum_y_meanY_2/(length(X)-1)))
+Sx = sqrt((sum_x_meanX_2/(length(Y)-1)))
+
+b = r * (Sy/Sx)          
+
+a = meanY - (b*meanX)
+
+
+
+model <- lm(Y~X)
+
+plot(X,Y)
+abline(a = a, b = b)
+points(15,a+(b*15),col="blue",lwd=3,pch=2)
+summary(model)
+
+
+
+estimate =0
+
+for(i in 1:length(X)){
+  points(X[i],a+(b*X[i]))
+  estimate[i] = Y[i] - ((b*X[i])+a)
+  
+}
+error1 = 0
+
+for(i in 1:length(X)){
+  error1 = (sum((Y[i] - estimate[i])^2))/(length(X)-2)
+}
+sqrt(error1)
+
+fitted = Y[1] - estimate[1]
