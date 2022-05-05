@@ -1,0 +1,27 @@
+set.seed(12345)
+f0 <-102
+mu <-(0.05)
+sigma <-0.08
+T <-0.5
+t <- seq(1/365,T,by=1/365)
+n <-length(t)
+#method 1
+f<-numeric(n)
+f<-sapply(t,function(t) f0*exp((mu-0.5*sigma^2)*t+sigma*rnorm(1,mean=0,sd=sqrt(t))))
+diff <- f- f0
+plot(t,f,type="l")
+
+f<-numeric(n)
+f<-f0*exp(cumsum((mu-sigma*sigma/2)*T/n + sigma*sqrt(T/n)*rnorm(n)))
+diff <- f- f0
+plot(t,f,type="l")
+
+dt <- 1/365
+f2<-numeric(n)
+f2[1]<- f0
+delta<-0
+for (i in 2:n) {
+  delta = mu*f2[i-1]*dt+sigma*f2[i-1]*rnorm(1,mean=0,sd=sqrt(dt))
+  f2[i]=f2[i-1]+delta
+}
+plot(t,f2,type="l")
