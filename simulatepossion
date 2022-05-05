@@ -1,0 +1,33 @@
+rhosGen <- function(lambda, maxTime){
+  rhos <- NULL
+  i <- 1
+  while(sum(rhos) < maxTime){
+    samp <- rexp(n = 1, rate = lambda)
+    rhos[i] <- samp
+    i <- i+1
+  }
+  return(head(rhos, -1))
+}
+taosGen <- function(lambda, maxTime){
+  rhos <- rhosGen(lambda, maxTime)
+  taos <- NULL
+  cumSum <- 0
+  for(i in 1:length(rhos)){
+    taos[i] <- sum(rhos[1:i])
+  }
+  return(taos)
+}
+
+ppGen <- function(lambda, maxTime){
+  taos <- taosGen(lambda, maxTime)
+  pp <- NULL
+  for(i in 1:maxTime){
+    pp[i] <- sum(taos <= i)
+  }
+  return(pp)
+}
+
+y <- ppGen(1.5, 20)
+x <- seq(0, 20-1, by=1)
+
+plot(x,y, type="l")
