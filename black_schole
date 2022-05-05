@@ -1,0 +1,22 @@
+f = 62
+k = 60
+t = 40/365
+sigma = 0.32
+r = 0.04
+
+
+d1 = (log(f/k) + (sigma^2 /2)*t) / (sigma * sqrt(t))
+d2 = d1 - sigma*sqrt(t)
+
+c = exp(-r*t) * (f*pnorm(d1) - k*pnorm(d2))
+p = exp(-r*t) * (k*pnorm(-d2)- f*pnorm(-d1))
+
+
+
+d1 = (log(s/x) + r *t)/(v*sqrt(t)) + v*sqrt(t)/2
+d2 = d1 - v*sqrt(t)
+
+N1 = pnorm(d1)
+N2 = pnorm(d2)
+
+c = s*N1 - exp(-r*t)*x*N2
